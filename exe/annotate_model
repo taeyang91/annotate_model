@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+require 'annotate_model'
+
+AnnotateModel::CLI.start(ARGV)
