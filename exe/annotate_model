@@ -2,4 +2,6 @@
 
 require 'annotate_model'
 
+load File.expand_path('config/environment.rb', Dir.pwd)
+
 AnnotateModel::Cli.start(ARGV)
