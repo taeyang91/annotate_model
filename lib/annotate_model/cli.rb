@@ -1,5 +1,5 @@
 module AnnotateModel
-  class CLI
+  class Cli
     def self.start(args)
       options = {}
       OptionParser.new do |opts|

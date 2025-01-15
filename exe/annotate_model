@@ -2,4 +2,4 @@
 
 require 'annotate_model'
 
-AnnotateModel::CLI.start(ARGV)
+AnnotateModel::Cli.start(ARGV)
