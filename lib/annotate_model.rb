@@ -1,8 +1,7 @@
-# frozen_string_literal: true
-
-require_relative "annotate_model/version"
+require "optparse"
+require "zeitwerk"
+loader = Zeitwerk::Loader.for_gem
+loader.setup
 
 module AnnotateModel
-  class Error < StandardError; end
-  # Your code goes here...
 end

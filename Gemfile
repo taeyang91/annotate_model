@@ -2,6 +2,8 @@
 
 source "https://rubygems.org"
 
+gem "zeitwerk"
+
 # Specify your gem's dependencies in annotate_model.gemspec
 gemspec
 
