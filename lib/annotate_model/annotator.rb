@@ -17,8 +17,36 @@ module AnnotateModel
     end
 
     def self.annotate_file(file)
-      # TODO: Implement annotation logic
-      puts "Annotating #{file}"
+      schema_info = fetch_schema_info(file)
+      return unless schema_info
+
+      content = File.read(file)
+      annotated_content = <<~ANNOTATION + content
+        # == Schema Information
+        #
+        #{schema_info}
+      ANNOTATION
+
+      File.write(file, annotated_content)
+      puts "Annotated #{file}"
+    end
+
+    def self.fetch_schema_info(file)
+      model_name = File.basename(file, ".rb").camelize
+      table_name = model_name.tableize
+
+      begin
+        columns = ActiveRecord::Base.connection.columns(table_name)
+      rescue ActiveRecord::StatementInvalid
+        puts "Could not find table '#{table_name}'"
+        return
+      end
+
+      schema_info = columns.map do |column|
+        "# #{column.name.ljust(10)} :#{column.type}#{' ' * (15 - column.type.to_s.length)}#{column.null ? '' : ' not null'}"
+      end
+
+      schema_info.join("\n")
     end
   end
 end
