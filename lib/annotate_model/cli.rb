@@ -18,8 +18,9 @@ module AnnotateModel
       if options[:all]
         AnnotateModel::Annotator.annotate_all
       elsif args.any?
-        model_name = args.first
-        AnnotateModel::Annotator.annotate_single(model_name)
+        args.each do |model_name|
+          AnnotateModel::Annotator.annotate_single(model_name)
+        end
       else
         puts "Please specify a model name or use -a for all models."
         exit(1)
