@@ -12,7 +12,6 @@ module AnnotateModel
         annotate_file(file)
       else
         puts "Model #{model_name} not found."
-        exit(1)
       end
     end
 
