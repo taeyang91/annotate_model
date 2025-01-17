@@ -21,10 +21,15 @@ module AnnotateModel
         return
       end
 
+      content = File.read(file)
+      if content.include?("# == Schema Information")
+        puts "Skipping annotation for '#{file}' as it is already annotated."
+        return
+      end
+
       schema_info = fetch_schema_info(file)
       return unless schema_info
 
-      content = File.read(file)
       annotated_content = <<~ANNOTATION + content
         # == Schema Information
         #
