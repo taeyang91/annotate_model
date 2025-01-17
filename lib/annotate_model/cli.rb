@@ -15,15 +15,12 @@ module AnnotateModel
         end
       end.parse!(args)
 
-      if options[:all]
+      if options[:all] || args.empty?
         AnnotateModel::Annotator.annotate_all
-      elsif args.any?
+      else
         args.each do |model_name|
           AnnotateModel::Annotator.annotate_single(model_name)
         end
-      else
-        puts "Please specify a model name or use -a for all models."
-        exit(1)
       end
     end
   end
