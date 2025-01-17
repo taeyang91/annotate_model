@@ -17,6 +17,11 @@ module AnnotateModel
     end
 
     def self.annotate_file(file)
+      unless AnnotationDecider.new(file).annotate?
+        puts "File '#{file}' doesn't contain a valid model class"
+        return
+      end
+
       schema_info = fetch_schema_info(file)
       return unless schema_info
 
