@@ -18,9 +18,7 @@ module AnnotateModel
       if options[:all] || args.empty?
         AnnotateModel::Annotator.annotate_all
       else
-        args.each do |model_name|
-          AnnotateModel::Annotator.annotate_single(model_name)
-        end
+        AnnotateModel::Annotator.annotate(args)
       end
     end
   end

@@ -1,11 +1,21 @@
 module AnnotateModel
   class Annotator
+    def self.annotate(model_names)
+      process_files(AnnotateModel::Finder.model_files!(model_names))
+    rescue ModelFileNotFoundError => e
+      warn e.message
+    end
+
     def self.annotate_all
+      process_files(AnnotateModel::Finder.all_model_files)
+    end
+
+    def self.process_files(files)
       run_files = []
       skipped_files = []
       failed_files = []
 
-      AnnotateModel::Finder.all_model_files.each do |file|
+      files.each do |file|
         result = annotate_file(file)
         case result
         when :run
@@ -17,34 +27,14 @@ module AnnotateModel
         end
       end
 
-      puts "Annotated files (#{run_files.size}):"
-      run_files.each { |file| puts "  - #{file}" }
-
-      puts "Skipped files (#{skipped_files.size}):"
-      skipped_files.each { |file| puts "  - #{file}" }
-
-      puts "Failed files (#{failed_files.size}):"
-      failed_files.each { |file| puts "  - #{file}" }
-    end
-
-    def self.annotate_single(model_name)
-      file = AnnotateModel::Finder.find_model_file(model_name)
-      if file
-        annotate_file(file)
-      else
-        puts "Model #{model_name} not found."
-      end
+      log_results(run_files, skipped_files, failed_files)
     end
 
     def self.annotate_file(file)
-      unless AnnotationDecider.new(file).annotate?
-        return :failed
-      end
+      return :failed unless AnnotationDecider.new(file).annotate?
 
       content = File.read(file)
-      if content.include?("# == Schema Information")
-        return :skipped
-      end
+      return :skipped if content.include?("# == Schema Information")
 
       schema_info = fetch_schema_info(file)
       return :failed unless schema_info
@@ -66,15 +56,24 @@ module AnnotateModel
       begin
         columns = ActiveRecord::Base.connection.columns(table_name)
       rescue ActiveRecord::StatementInvalid
-        puts "Could not find table '#{table_name}'"
+        warn "Could not find table '#{table_name}'"
         return
       end
 
-      schema_info = columns.map do |column|
+      columns.map do |column|
         "# #{column.name.ljust(10)} :#{column.type}#{' ' * (15 - column.type.to_s.length)}#{column.null ? '' : ' not null'}"
-      end
+      end.join("\n")
+    end
 
-      schema_info.join("\n")
+    def self.log_results(run_files, skipped_files, failed_files)
+      puts "Annotated files (#{run_files.size}):"
+      run_files.each { |file| puts "  - #{file}" }
+
+      puts "Skipped files (#{skipped_files.size}):"
+      skipped_files.each { |file| puts "  - #{file}" }
+
+      puts "Failed files (#{failed_files.size}):"
+      failed_files.each { |file| puts "  - #{file}" }
     end
   end
 end
