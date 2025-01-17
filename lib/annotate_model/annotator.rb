@@ -17,7 +17,7 @@ module AnnotateModel
 
     def self.annotate_file(file)
       unless AnnotationDecider.new(file).annotate?
-        puts "File '#{file}' doesn't contain a valid model class"
+        warn "File '#{file}' doesn't contain a valid model class"
         return
       end
 
