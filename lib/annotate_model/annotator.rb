@@ -1,9 +1,30 @@
 module AnnotateModel
   class Annotator
     def self.annotate_all
+      run_files = []
+      skipped_files = []
+      failed_files = []
+
       AnnotateModel::Finder.all_model_files.each do |file|
-        annotate_file(file)
+        result = annotate_file(file)
+        case result
+        when :run
+          run_files << file
+        when :skipped
+          skipped_files << file
+        when :failed
+          failed_files << file
+        end
       end
+
+      puts "Annotated files (#{run_files.size}):"
+      run_files.each { |file| puts "  - #{file}" }
+
+      puts "Skipped files (#{skipped_files.size}):"
+      skipped_files.each { |file| puts "  - #{file}" }
+
+      puts "Failed files (#{failed_files.size}):"
+      failed_files.each { |file| puts "  - #{file}" }
     end
 
     def self.annotate_single(model_name)
@@ -17,18 +38,16 @@ module AnnotateModel
 
     def self.annotate_file(file)
       unless AnnotationDecider.new(file).annotate?
-        warn "File '#{file}' doesn't contain a valid model class"
-        return
+        return :failed
       end
 
       content = File.read(file)
       if content.include?("# == Schema Information")
-        puts "Skipping annotation for '#{file}' as it is already annotated."
-        return
+        return :skipped
       end
 
       schema_info = fetch_schema_info(file)
-      return unless schema_info
+      return :failed unless schema_info
 
       annotated_content = <<~ANNOTATION + content
         # == Schema Information
@@ -37,7 +56,7 @@ module AnnotateModel
       ANNOTATION
 
       File.write(file, annotated_content)
-      puts "Annotated #{file}"
+      :run
     end
 
     def self.fetch_schema_info(file)
