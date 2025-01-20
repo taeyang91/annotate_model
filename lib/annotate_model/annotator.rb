@@ -33,7 +33,7 @@ module AnnotateModel
     def self.annotate_file(file)
       return :failed unless AnnotationDecider.new(file).annotate?
 
-      content = File.read(file)
+      content = File.read(file.to_s)
       return :skipped if content.include?("# == Schema Information")
 
       schema_info = fetch_schema_info(file)
@@ -45,13 +45,12 @@ module AnnotateModel
         #{schema_info}
       ANNOTATION
 
-      File.write(file, annotated_content)
+      File.write(file.to_s, annotated_content)
       :run
     end
 
     def self.fetch_schema_info(file)
-      model_name = File.basename(file, ".rb").camelize
-      table_name = model_name.tableize
+      table_name = file.model_name.tableize
 
       begin
         columns = ActiveRecord::Base.connection.columns(table_name)
@@ -67,13 +66,13 @@ module AnnotateModel
 
     def self.log_results(run_files, skipped_files, failed_files)
       puts "Annotated files (#{run_files.size}):"
-      run_files.each { |file| puts "  - #{file}" }
+      run_files.each { |file| puts "  - #{file.relative_path}" }
 
       puts "Skipped files (#{skipped_files.size}):"
-      skipped_files.each { |file| puts "  - #{file}" }
+      skipped_files.each { |file| puts "  - #{file.relative_path}" }
 
       puts "Failed files (#{failed_files.size}):"
-      failed_files.each { |file| puts "  - #{file}" }
+      failed_files.each { |file| puts "  - #{file.relative_path}" }
     end
   end
 end

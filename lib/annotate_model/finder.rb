@@ -7,12 +7,15 @@ module AnnotateModel
     end
 
     def self.all_model_files
-      Dir.glob(Rails.root.join("app", "models", "**", "*.rb"))
+      files = Dir.glob(Rails.root.join("app", "models", "**", "*.rb")).reject { |file_path| file_path.include?('application_record.rb') }
+      files.map do |file|
+        ModelFile.new(Pathname.new(file))
+      end
     end
 
     def self.find_model_file(model_name)
       model_path = Rails.root.join("app", "models", "#{model_name.underscore}.rb")
-      model_path if File.exist?(model_path)
+      ModelFile.new(model_path) if File.exist?(model_path)
     end
 
     def self.find_model_file!(model_name)

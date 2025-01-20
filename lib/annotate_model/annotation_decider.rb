@@ -7,8 +7,11 @@ module AnnotateModel
     end
 
     def annotate?
-      klass = ModelClassGetter.call(@file)
-      return false unless klass
+      begin
+        klass = @file.model_name.constantize
+      rescue NameError
+        return false
+      end
 
       annotate_conditions(klass).all?
     end
