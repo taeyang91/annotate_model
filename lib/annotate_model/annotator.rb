@@ -12,7 +12,6 @@ module AnnotateModel
 
     def self.process_files(files)
       run_files = []
-      skipped_files = []
       failed_files = []
 
       files.each do |file|
@@ -20,18 +19,16 @@ module AnnotateModel
         case result
         when :run
           run_files << file
-        when :skipped
-          skipped_files << file
         when :failed
           failed_files << file
         end
       end
 
-      log_results(run_files, skipped_files, failed_files)
+      log_results(run_files, failed_files)
     end
 
     def self.annotate_file(file)
-      return :failed unless AnnotationDecider.new(file).annotate?
+      return :skipped unless AnnotationDecider.new(file).annotate?
 
       content = File.read(file.to_s)
       return :skipped if content.include?("# == Schema Information")
@@ -62,12 +59,9 @@ module AnnotateModel
       end.join("\n")
     end
 
-    def self.log_results(run_files, skipped_files, failed_files)
+    def self.log_results(run_files, failed_files)
       puts "Annotated files (#{run_files.size}):"
       run_files.each { |file| puts "  - #{file.relative_path}" }
-
-      puts "Skipped files (#{skipped_files.size}):"
-      skipped_files.each { |file| puts "  - #{file.relative_path}" }
 
       puts "Failed files (#{failed_files.size}):"
       failed_files.each { |file| puts "  - #{file.relative_path}" }
