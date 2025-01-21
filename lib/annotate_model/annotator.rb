@@ -50,12 +50,10 @@ module AnnotateModel
     end
 
     def self.fetch_schema_info(file)
-      table_name = file.model_name.tableize
-
       begin
-        columns = ActiveRecord::Base.connection.columns(table_name)
+        columns = ActiveRecord::Base.connection.columns(file.table_name)
       rescue ActiveRecord::StatementInvalid
-        warn "Could not find table '#{table_name}'"
+        warn "Could not find table '#{file.table_name}'"
         return
       end
 
