@@ -1,6 +1,9 @@
-# AnnotateModel [![Gem Version](https://badge.fury.io/rb/annotate_model.svg)](https://badge.fury.io/rb/annotate_model)
+# AnnotateModel [![Gem Version][]][gem-version]
 
 AnnotateModel is a lightweight gem to annotate Rails models with database schema information.
+
+[Gem Version]: https://badge.fury.io/rb/annotate_model.svg
+[gem-version]: https://rubygems.org/gems/annotate_model
 
 ## Example
 
