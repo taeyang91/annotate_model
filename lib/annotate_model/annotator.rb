@@ -60,11 +60,12 @@ module AnnotateModel
     end
 
     def self.log_results(run_files, failed_files)
-      puts "Annotated files (#{run_files.size}):"
+      puts "Annotated files:"
       run_files.each { |file| puts "  - #{file.relative_path}" }
 
-      puts "Failed files (#{failed_files.size}):"
+      puts "Failed files:"
       failed_files.each { |file| puts "  - #{file.relative_path}" }
+      puts "#{run_files.size} runs, #{failed_files.size} failures"
     end
   end
 end
