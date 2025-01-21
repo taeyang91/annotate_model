@@ -57,6 +57,14 @@ To annotate specific models, run:
 
 `bundle exec annotate_model Product Admin::User`
 
+## Skipping Annotation
+
+If you want to skip annotation for a specific model, add the following skip flag to the model file:
+
+```ruby
+# == annotate_model:skip
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
