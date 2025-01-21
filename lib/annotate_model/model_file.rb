@@ -30,7 +30,7 @@ module AnnotateModel
     #   For a file path "app/models/admin/user.rb", it returns "admin_users".
     #   For a file path "app/models/product.rb", it returns "products".
     def table_name
-      @file_path.relative_path_from(Rails.root.join('app', 'models')).to_s.sub('.rb', '').classify.tableize
+      @file_path.relative_path_from(Rails.root.join('app', 'models')).to_s.sub('.rb', '').classify.tableize.sub('/', '_')
     end
 
     def to_s
