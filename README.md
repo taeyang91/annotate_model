@@ -16,6 +16,18 @@ class Product < ApplicationRecord
 end
 ```
 
+```ruby
+# == Schema Information
+#
+# id         :integer         not null
+# name       :string
+# email      :string
+# created_at :datetime        not null
+# updated_at :datetime        not null
+class Admin::User < ApplicationRecord
+end
+```
+
 ## Installation
 
 Add this line to the application's Gemfile:
@@ -36,11 +48,11 @@ gem install annotate_model
 
 To annotate all models, run:
 
-`bundle exec annotate_model --all`
+`bundle exec annotate_model`
 
 To annotate specific models, run:
 
-`bundle exec annotate_model [model_name1] [model_name2] ...`
+`bundle exec annotate_model Product Admin::User`
 
 ## Development
 
