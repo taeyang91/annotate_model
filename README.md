@@ -15,6 +15,7 @@ Here's an example of the schema information in your model file after annotation:
 # name       :string
 # created_at :datetime        not null
 # updated_at :datetime        not null
+# ==
 class Product < ApplicationRecord
 end
 ```
@@ -27,9 +28,12 @@ end
 # email      :string
 # created_at :datetime        not null
 # updated_at :datetime        not null
+# ==
 class Admin::User < ApplicationRecord
 end
 ```
+
+The annotation block is re-written each time the command runs. The starting line `# == Schema Information` and the ending line `# ==` should never be changed as they are important for the regex match used to remove existing annotations.
 
 ## Installation
 

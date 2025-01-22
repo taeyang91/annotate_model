@@ -30,20 +30,24 @@ module AnnotateModel
     def self.annotate_file(file)
       return :skipped unless AnnotationDecider.new(file).annotate?
 
-      content = File.read(file.to_s)
-      return :skipped if content.include?("# == Schema Information")
-
       schema_info = fetch_schema_info(file)
       return :failed unless schema_info
 
+      content = File.read(file.to_s)
+      content = remove_existing_annotation(content)
       annotated_content = <<~ANNOTATION + content
         # == Schema Information
         #
         #{schema_info}
+        # ==
       ANNOTATION
 
       File.write(file.to_s, annotated_content)
       :run
+    end
+
+    def self.remove_existing_annotation(content)
+      content.sub(/^# == Schema Information\n(#.*\n)*# ==\n/m, '')
     end
 
     def self.fetch_schema_info(file)
